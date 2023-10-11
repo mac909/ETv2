@@ -1,0 +1,14 @@
+{
+  "resourceName": "WbsFolderStructure",
+  "policyUUID": "1a176b8c",
+  "bucketName": "wbsfolderbucket",
+  "storageAccess": "auth",
+  "guestAccess": [],
+  "authAccess": [
+    "CREATE_AND_UPDATE",
+    "READ",
+    "DELETE"
+  ],
+  "triggerFunction": "NONE",
+  "groupAccess": {}
+}
