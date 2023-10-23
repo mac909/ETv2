@@ -6,14 +6,17 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
-const ExpandableText = ({
-	id,
-	label,
-	menuItems,
-	labelItems,
-	itemIDs,
-	value,
-}) => {
+const ExpandableText = (props) => {
+	const {
+		id,
+		label,
+		menuItems,
+		labelItems,
+		itemIDs,
+		itemNames,
+		onChange,
+		value,
+	} = props;
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [additionalInfo, setAdditionalInfo] = useState("");
 
@@ -23,11 +26,6 @@ const ExpandableText = ({
 
 	const handleCloseMenu = () => {
 		setAnchorEl(null);
-	};
-
-	const handleInputChange = (event) => {
-		const { value } = event.target;
-		setAdditionalInfo(value);
 	};
 
 	return (
@@ -70,9 +68,10 @@ const ExpandableText = ({
 							id={itemIDs[item]}
 							label={labelItems[item]}
 							value={`${index}`}
+							name={itemNames[item]}
 							variant="outlined"
 							size="small"
-							onChange={handleInputChange}
+							onChange={onChange}
 						/>
 					</MenuItem>
 				))}

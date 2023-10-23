@@ -4,43 +4,26 @@ import {
 	Grid,
 	Typography,
 	TextField,
-	Container,
 	Button,
 	FormGroup,
 	FormControlLabel,
 	Checkbox,
 } from "@mui/material";
 
-import { API, graphqlOperation } from "aws-amplify";
-import { getProject } from "../../../graphql/queries";
-
 import ProjectNotes from "../../ProjectNotes/ProjectNotes";
 
-const ProjectDetails = () => {
-	const id = sessionStorage.getItem("selectedProjectID");
-	const [showMore, setShowMore] = useState(false);
-	const [selectedProjectID, setSelectProjectID] = useState({});
+const ProjectDetails = (props) => {
+	const { project, onChange, onChangeCheckbox, onSave } = props;
 
-	const getProjectData = async () => {
-		try {
-			const projectData = await API.graphql(
-				graphqlOperation(getProject, { id })
-			);
-			const project = projectData.data.getProject;
-			setSelectProjectID(project);
-		} catch (error) {
-			console.log("error on fetching projects", error);
-		}
-	};
+	const [showMore, setShowMore] = useState(
+		sessionStorage.getItem("showMore") === "true"
+	);
+	const formData = project;
 
 	const toggleShowMore = () => {
 		sessionStorage.setItem("showMore", !showMore);
 		setShowMore(!showMore);
 	};
-
-	useEffect(() => {
-		getProjectData({ id });
-	}, [id]);
 
 	return (
 		<Typography variant="body1">
@@ -48,18 +31,60 @@ const ProjectDetails = () => {
 				<FormGroup>
 					<Grid container>
 						<Grid item lg={6}>
-							<FormControlLabel
-								control={<Checkbox />}
-								label="Active"
-							/>
-							<FormControlLabel
-								control={<Checkbox />}
-								label="Weekly"
-							/>
-							<FormControlLabel
-								control={<Checkbox />}
-								label="Monthly"
-							/>
+							{project?.Active ? (
+								<FormControlLabel
+									control={<Checkbox checked={true} />}
+									label="Active"
+									name="Active"
+									onChange={onChangeCheckbox}
+								/>
+							) : (
+								<FormControlLabel
+									control={<Checkbox checked={false} />}
+									label="Active"
+									name="Active"
+									onChange={onChangeCheckbox}
+								/>
+							)}
+							{project?.Weekly ? (
+								<FormControlLabel
+									control={<Checkbox checked={true} />}
+									label="Weekly"
+									name="Weekly"
+									onChange={onChangeCheckbox}
+								/>
+							) : (
+								<FormControlLabel
+									control={<Checkbox checked={false} />}
+									label="Weekly"
+									name="Weekly"
+									onChange={onChangeCheckbox}
+								/>
+							)}
+							{project?.Monthly ? (
+								<FormControlLabel
+									control={<Checkbox checked={true} />}
+									label="Monthly"
+									name="Monthly"
+									onChange={onChangeCheckbox}
+								/>
+							) : (
+								<FormControlLabel
+									control={<Checkbox checked={true} />}
+									label="Monthly"
+									name="Monthly"
+									onChange={onChangeCheckbox}
+								/>
+							)}
+						</Grid>
+						<Grid item lg={6} container justify="flex-end">
+							<Button
+								variant="contained"
+								color="primary"
+								onClick={onSave}
+							>
+								Save
+							</Button>
 						</Grid>
 					</Grid>
 				</FormGroup>
@@ -73,9 +98,9 @@ const ProjectDetails = () => {
 							fullWidth={true}
 							size="small"
 							margin="dense"
-							value={`${
-								selectedProjectID?.ProjectNumber || "NA"
-							}`}
+							name="ProjectNumber"
+							value={`${formData?.ProjectNumber || ""}`}
+							onChange={onChange}
 						/>
 					</Grid>
 					<Grid item flex={2}>
@@ -86,7 +111,9 @@ const ProjectDetails = () => {
 							fullWidth={true}
 							size="small"
 							margin="dense"
-							value={`${selectedProjectID?.WBSElement || "NA"}`}
+							value={`${formData?.WBSElement || ""}`}
+							name="WBSElement"
+							onChange={onChange}
 						/>
 					</Grid>
 					<Grid item flex={1}>
@@ -97,7 +124,9 @@ const ProjectDetails = () => {
 							fullWidth={true}
 							size="small"
 							margin="dense"
-							value={`${selectedProjectID?.WBSSAPStatus || "NA"}`}
+							value={`${formData?.WBSSAPStatus || ""}`}
+							name="WBSSAPStatus"
+							onChange={onChange}
 						/>
 					</Grid>
 				</Grid>
@@ -109,7 +138,9 @@ const ProjectDetails = () => {
 					fullWidth={true}
 					size="small"
 					margin="dense"
-					value={`${selectedProjectID?.WBSDescription || "NA"}`}
+					value={`${formData?.WBSDescription || ""}`}
+					name="WBSDescription"
+					onChange={onChange}
 				/>
 				<TextField
 					id="company"
@@ -117,9 +148,10 @@ const ProjectDetails = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.ProjectNumber || "NA"}`}
+					value={`${formData?.Client || ""}`}
+					name="Client"
+					onChange={onChange}
 				/>
 
 				{showMore && (
@@ -135,9 +167,10 @@ const ProjectDetails = () => {
 									inputProps={{ maxLength: 6 }}
 									margin="dense"
 									value={`${
-										selectedProjectID?.CustomerUtilityNumber ||
-										"NA"
+										formData?.CustomerUtilityNumber || ""
 									}`}
+									name="CustomerUtilityNumber"
+									onChange={onChange}
 								/>
 							</Grid>
 							<Grid item flex={1}>
@@ -149,10 +182,9 @@ const ProjectDetails = () => {
 									size="small"
 									inputProps={{ maxLength: 6 }}
 									margin="dense"
-									value={`${
-										selectedProjectID?.GPSCoordinates ||
-										"NA"
-									}`}
+									value={`${formData?.GPSCoordinates || ""}`}
+									name="GPSCoordinates"
+									onChange={onChange}
 								/>
 							</Grid>
 						</Grid>
@@ -167,9 +199,9 @@ const ProjectDetails = () => {
 									fullWidth={true}
 									size="small"
 									margin="dense"
-									value={`${
-										selectedProjectID?.Scope || "NA"
-									}`}
+									value={`${formData?.Scope || ""}`}
+									name="Scope"
+									onChange={onChange}
 								/>
 							</Grid>
 							<Grid item flex={1}>
@@ -182,7 +214,9 @@ const ProjectDetails = () => {
 									fullWidth={true}
 									size="small"
 									margin="dense"
-									value={`${selectedProjectID?.Line || "NA"}`}
+									value={`${formData?.Line || ""}`}
+									name="Line"
+									onChange={onChange}
 								/>
 							</Grid>
 						</Grid>
@@ -195,9 +229,9 @@ const ProjectDetails = () => {
 									fullWidth={true}
 									size="small"
 									margin="dense"
-									value={`${
-										selectedProjectID?.State || "NA"
-									}`}
+									value={`${formData?.State || ""}`}
+									name="State"
+									onChange={onChange}
 								/>
 							</Grid>
 							<Grid item flex={2}>
@@ -208,9 +242,9 @@ const ProjectDetails = () => {
 									fullWidth={true}
 									size="small"
 									margin="dense"
-									value={`${
-										selectedProjectID?.County || "NA"
-									}`}
+									value={`${formData?.County || ""}`}
+									name="County"
+									onChange={onChange}
 								/>
 							</Grid>
 							<Grid item flex={2}>
@@ -221,7 +255,9 @@ const ProjectDetails = () => {
 									fullWidth={true}
 									size="small"
 									margin="dense"
-									value={`${selectedProjectID?.City || "NA"}`}
+									value={`${formData?.City || ""}`}
+									name="City"
+									onChange={onChange}
 								/>
 							</Grid>
 						</Grid>
