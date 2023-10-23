@@ -39,16 +39,6 @@ const ProjectNotes = () => {
 	const showMore = sessionStorage.getItem("showMore");
 	const id = sessionStorage.getItem("selectedProjectID");
 
-	const data = [
-		{
-			id: 1,
-			initials: "JH",
-			dateCreated: "10/10/2021",
-			category: "Project",
-			comment: "This is a test comment",
-		},
-	];
-
 	const handleAddNoteClick = () => {
 		setOpen(true);
 	};

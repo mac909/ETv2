@@ -6,40 +6,16 @@ import {
 	Typography,
 	InputAdornment,
 	IconButton,
-	Menu,
-	MenuItem,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useNavigate } from "react-router-dom";
 import ExpandableText from "./ExpandableText";
-import { API, graphqlOperation } from "aws-amplify";
-import { getProject } from "../../../graphql/queries";
 
-const ProjectInfo = () => {
+const ProjectInfo = (props) => {
+	const { project, onChange } = props;
 	const navigate = useNavigate();
-	const id = sessionStorage.getItem("selectedProjectID");
-	const [selectedProjectID, setSelectProjectID] = useState({});
-
-	const fetchProjectData = async () => {
-		try {
-			const projectData = await API.graphql(
-				graphqlOperation(getProject, { id })
-			);
-			const project = projectData.data.getProject;
-			setSelectProjectID(project);
-		} catch (error) {
-			console.log("error on fetching projects", error);
-		}
-	};
-
-	// const changeProject = (id) => {
-	// 	return () => {
-	// 		sessionStorage.setItem("selectedProjectID", id);
-	// 		setSelectProjectID(id);
-	// 		// fetchProjectData({ id });
-	// 	};
-	// };
+	const formData = project;
 
 	const goToTransactions = (id) => {
 		return () => navigate("/transaction/" + id, { replace: true });
@@ -50,8 +26,8 @@ const ProjectInfo = () => {
 	};
 
 	useEffect(() => {
-		fetchProjectData({ id });
-	}, [id]);
+		console.log("project", formData);
+	}, [formData]);
 
 	return (
 		// <Typography variant="body1" component="div" align="center" gutterBottom>
@@ -64,12 +40,12 @@ const ProjectInfo = () => {
 					label="Project Manager"
 					variant="outlined"
 					fullWidth={true}
+					onChange={onChange}
 					size="small"
 					inputProps={{ maxLength: 45 }}
 					margin="dense"
-					value={`${
-						selectedProjectID?.PersonResponsibleName || "NA"
-					}`}
+					name="PersonResponsibleName"
+					value={`${formData?.PersonResponsibleName || "NA"}`}
 				/>
 				<TextField
 					id="cost-analyst"
@@ -77,9 +53,11 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.Analyst || "NA"}`}
+					name="Analyst"
+					onChange={onChange}
+					value={`${formData?.Analyst || "NA"}`}
 				/>
 				<TextField
 					id="division-district"
@@ -87,19 +65,22 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.DistrictDivision || "NA"}`}
+					name="DistrictDivision"
+					value={`${formData?.DistrictDivision || "NA"}`}
 				/>
 				<ExpandableText
 					id="area"
 					label="Area"
-					value={selectedProjectID?.Area || "NA"}
+					value={formData?.Area || "NA"}
+					onChange={onChange}
 					menuItems={[
-						selectedProjectID?.OpsVP || "NA",
-						selectedProjectID?.OpsDirector || "NA",
-						selectedProjectID?.OpsManager || "NA",
-						selectedProjectID?.LinePatrol || "NA",
+						formData?.OpsVP || "NA",
+						formData?.OpsDirector || "NA",
+						formData?.OpsManager || "NA",
+						formData?.LinePatrol || "NA",
 					]}
 					labelItems={[
 						"Ops VP",
@@ -113,15 +94,22 @@ const ProjectInfo = () => {
 						"OpsManager",
 						"LinePatrol",
 					]}
+					itemNames={[
+						"OpsVP",
+						"OpsDirector",
+						"OpsManager",
+						"LinePatrol",
+					]}
 				/>
 				<ExpandableText
 					label="Cost Center"
-					value={selectedProjectID?.CostCenter || "NA"}
+					value={formData?.CostCenter || "NA"}
+					onChange={onChange}
 					menuItems={[
-						selectedProjectID?.ProfitCenter || "NA",
-						selectedProjectID?.MAOP || "NA",
-						selectedProjectID?.Product || "NA",
-						selectedProjectID?.TaxJurisdiction || "NA",
+						formData?.ProfitCenter || "NA",
+						formData?.MAOP || "NA",
+						formData?.Product || "NA",
+						formData?.TaxJurisdiction || "NA",
 					]}
 					labelItems={[
 						"Profit Center",
@@ -135,16 +123,24 @@ const ProjectInfo = () => {
 						"Product",
 						"TaxJurisdiction",
 					]}
+					itemNames={[
+						"ProfitCenter",
+						"MAOP",
+						"Product",
+						"TaxJurisdiction",
+					]}
 				/>
 				<TextField
 					id="client"
 					label="Client"
 					variant="outlined"
 					fullWidth={true}
+					name="Client"
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					// inputProps={{ maxLength: 6 }}
+					onChange={onChange}
 					margin="dense"
-					value={`${selectedProjectID?.Client || "NA"}`}
+					value={`${formData?.Client || "NA"}`}
 				/>
 				<TextField
 					id="reimbursement-percentage"
@@ -152,11 +148,11 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					name="ReimbursementPercentage"
+					onChange={onChange}
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${
-						selectedProjectID?.ReimbursementPercentage || "NA"
-					}`}
+					value={`${formData?.ReimbursementPercentage || "NA"}`}
 				/>
 				<TextField
 					id="overhead-percentage"
@@ -164,9 +160,11 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="OverheadPercentage"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.OverheadPercentage || "NA"}`}
+					value={`${formData?.OverheadPercentage || "NA"}`}
 				/>
 				<TextField
 					id="current-approved-budget"
@@ -174,9 +172,11 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="ApprovedGrossBudget"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.ApprovedGrossBudget || "NA"}`}
+					value={`${formData?.ApprovedGrossBudget || "NA"}`}
 				/>
 				<TextField
 					id="actual-cost-to-date"
@@ -184,17 +184,17 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="Actuals"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.Actuals || "NA"}`}
+					value={`${formData?.Actuals || "NA"}`}
 					InputProps={{
 						endAdornment: (
 							<InputAdornment position="end">
 								<IconButton
 									edge="end"
-									onClick={goToTransactions(
-										selectedProjectID?.id
-									)}
+									onClick={goToTransactions(formData?.id)}
 								>
 									<KeyboardArrowRightIcon />
 								</IconButton>
@@ -209,9 +209,11 @@ const ProjectInfo = () => {
 					// error={true}
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="CurrentForecast"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.CurrentForecast || "NA"}`}
+					value={`${formData?.CurrentForecast || "NA"}`}
 				/>
 				<TextField
 					id="current-commitment"
@@ -219,17 +221,17 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="DirectCosts"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.DirectCosts || "NA"}`}
+					value={`${formData?.DirectCosts || "NA"}`}
 					InputProps={{
 						endAdornment: (
 							<InputAdornment position="end">
 								<IconButton
 									edge="end"
-									onClick={goToCommitment(
-										selectedProjectID?.id
-									)}
+									onClick={goToCommitment(formData?.id)}
 								>
 									<KeyboardArrowRightIcon />
 								</IconButton>
@@ -243,18 +245,22 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					name="CurrentForecast"
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
-					value={`${selectedProjectID?.CurrentForecast || "NA"}`}
+					value={`${formData?.CurrentForecast || "NA"}`}
 				/>
 				<ExpandableText
 					label="TM1 Reference"
-					value={selectedProjectID?.TM1Reference || "NA"}
+					value={formData?.TM1Reference || "NA"}
+					name="TM1Reference"
+					onChange={onChange}
 					menuItems={[
-						selectedProjectID?.TM1InitialDate || "NA",
-						selectedProjectID?.TM1CurrentDate || "NA",
-						selectedProjectID?.TM1CurrentAmount || "NA",
-						selectedProjectID?.TM1NetAmount || "NA",
+						formData?.TM1InitialDate || "NA",
+						formData?.TM1CurrentDate || "NA",
+						formData?.TM1CurrentAmount || "NA",
+						formData?.TM1NetAmount || "NA",
 					]}
 					labelItems={[
 						"TM1 Initial Date",
@@ -268,6 +274,12 @@ const ProjectInfo = () => {
 						"TM1CurrentAmount",
 						"TM1NetAmount",
 					]}
+					itemNames={[
+						"TM1InitialDate",
+						"TM1CurrentDate",
+						"TM1CurrentAmount",
+						"TM1NetAmount",
+					]}
 				/>
 				<TextField
 					id="related-wbs-count"
@@ -275,7 +287,8 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
 					// value={`${"C-22014-GL-21400087"}`}
 					InputProps={{
@@ -299,10 +312,11 @@ const ProjectInfo = () => {
 					variant="outlined"
 					fullWidth={true}
 					size="small"
-					inputProps={{ maxLength: 6 }}
+					onChange={onChange}
+					// inputProps={{ maxLength: 6 }}
 					margin="dense"
 					// value={`${
-					// 	selectedProjectID?.ProjectNumber || "NA"
+					// 	project?.ProjectNumber || "NA"
 					// }`}
 					InputProps={{
 						endAdornment: (

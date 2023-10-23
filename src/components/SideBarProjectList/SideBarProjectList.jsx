@@ -10,6 +10,7 @@ const SideBarProjectList = () => {
 	const [projects, setProjects] = useState([]);
 	const [selectedProjectID, setSelectedProjectID] = useState(null);
 	const [sortModel, setSortModel] = useState([]);
+	const changeMade = sessionStorage.getItem("changeMade");
 	const [filterModel, setFilterModel] = useState([
 		{ field: "WBSElement", operator: "contains", value: "" },
 	]);

@@ -97,8 +97,10 @@ function Upload() {
 			County,
 			City,
 			GPSCoordinates,
+			Active,
+			Weekly,
+			Monthly,
 		} = project;
-
 		if (isUpdate.length > 0) {
 			try {
 				await API.graphql({
@@ -156,6 +158,9 @@ function Upload() {
 							County,
 							City,
 							GPSCoordinates,
+							Active,
+							Weekly,
+							Monthly,
 							id: isUpdate[0].id,
 						},
 					},
@@ -220,6 +225,9 @@ function Upload() {
 							County,
 							City,
 							GPSCoordinates,
+							Active,
+							Weekly,
+							Monthly,
 						},
 					})
 				);
@@ -247,6 +255,7 @@ function Upload() {
 			"TM1CurrentAmount",
 			"TM1NetAmount",
 		];
+		const boolFields = ["Active", "Weekly", "Monthly"];
 		const file = event.target.files[0];
 
 		if (file) {
@@ -274,6 +283,8 @@ function Upload() {
 						} else {
 							if (numFields.includes(cleadedHeader)) {
 								rowData[cleadedHeader] = 0;
+							} else if (boolFields.includes(cleadedHeader)) {
+								rowData[cleadedHeader] = false;
 							} else {
 								rowData[cleadedHeader] = "-";
 							}
